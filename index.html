@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>onezerozero.com</title>
+<meta name="description" content="직접 만든 웹앱을 한곳에 모았습니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --text: #16181d;
+    --muted: #5d6470;
+    --line: #e3e6eb;
+    --shadow: 0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.06);
+    --orange: #e8590c;  --orange-bg: #fff1e6;
+    --blue:   #1c7ed6;  --blue-bg:   #e7f2fd;
+    --green:  #2f9e44;  --green-bg:  #e9f7ec;
+    --violet: #7048e8;  --violet-bg: #f0ebff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111317;
+      --surface: #1a1d23;
+      --text: #eceef2;
+      --muted: #9aa2ae;
+      --line: #2a2e36;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+      --orange: #ff922b; --orange-bg: #3a2414;
+      --blue:   #4dabf7; --blue-bg:   #13283b;
+      --green:  #51cf66; --green-bg:  #16301c;
+      --violet: #9775fa; --violet-bg: #251d3d;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.55;
+    word-break: keep-all;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+  header { padding: 56px 0 28px; }
+  .eyebrow { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: .02em; margin: 0 0 8px; }
+  h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 900; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.02em; }
+  .lead { color: var(--muted); font-size: 16px; margin: 0; max-width: 40em; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 28px 0 8px; }
+  .search {
+    flex: 1 1 240px; min-width: 0;
+    font: inherit; font-size: 15px; color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 14px; outline: none;
+  }
+  .search:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+    background: var(--surface); color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px;
+  }
+  .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  section { margin: 36px 0; }
+  section[hidden] { display: none; }
+  .sec-head { display: flex; align-items: baseline; gap: 10px; margin: 0 0 14px; }
+  .sec-head h2 { font-size: 20px; margin: 0; }
+  .sec-head span { color: var(--muted); font-size: 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  @media (max-width: 420px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    --c: var(--blue); --cb: var(--blue-bg);
+    position: relative; display: flex; flex-direction: column;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; box-shadow: var(--shadow);
+    color: inherit; text-decoration: none;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card:hover, .card:focus-visible { transform: translateY(-2px); border-color: var(--c); outline: none; }
+  .card[hidden] { display: none; }
+  .card.orange { --c: var(--orange); --cb: var(--orange-bg); }
+  .card.green  { --c: var(--green);  --cb: var(--green-bg); }
+  .card.violet { --c: var(--violet); --cb: var(--violet-bg); }
+
+  .icon {
+    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--cb); font-size: 22px; margin-bottom: 14px;
+  }
+  .card h4 { font-size: 17px; margin: 0 0 6px; line-height: 1.35; }
+  .card p { font-size: 14px; color: var(--muted); margin: 0 0 16px; flex: 1; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .tag { font-size: 12px; font-weight: 500; color: var(--c); background: var(--cb); border-radius: 6px; padding: 2px 8px; }
+  .go { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--c); white-space: nowrap; }
+  .code {
+    position: absolute; top: 18px; right: 18px; font-size: 12px; color: var(--muted);
+    text-decoration: none; border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px;
+  }
+  .code:hover { color: var(--text); border-color: var(--muted); }
+
+  .group { margin: 44px 0; }
+  .group[hidden] { display: none; }
+  .group-head { display: flex; align-items: baseline; gap: 10px; padding-bottom: 12px; border-bottom: 2px solid var(--text); margin-bottom: 4px; }
+  .group-head h2 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -.01em; }
+  .group-head span { color: var(--muted); font-size: 14px; }
+  .group section { margin: 24px 0 32px; }
+  .sec-head h3 { font-size: 17px; margin: 0; display: flex; align-items: center; gap: 8px; }
+  .sec-head h3::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
+
+  .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin: 12px 0 8px; }
+  @media (max-width: 420px) { .home-grid { grid-template-columns: 1fr; } }
+  .tile {
+    --c: var(--blue); --cb: var(--blue-bg);
+    display: flex; flex-direction: column; min-height: 240px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    padding: 28px; box-shadow: var(--shadow); color: inherit; text-decoration: none;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .tile:hover, .tile:focus-visible { transform: translateY(-3px); border-color: var(--c); outline: none; }
+  .tile.violet { --c: var(--violet); --cb: var(--violet-bg); }
+  .tile .icon { width: 56px; height: 56px; font-size: 28px; border-radius: 14px; margin-bottom: 18px; }
+  .tile h2 { font-size: 26px; font-weight: 900; margin: 0 0 6px; letter-spacing: -.01em; }
+  .tile p { color: var(--muted); font-size: 15px; margin: 0 0 18px; }
+  .tile .subs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; flex: 1; align-content: flex-start; }
+  .tile .subs span { font-size: 13px; font-weight: 500; color: var(--c); background: var(--cb); border-radius: 6px; padding: 3px 10px; }
+  .tile .go { margin-left: 0; font-size: 15px; }
+  .tile .count { color: var(--muted); font-size: 14px; font-weight: 500; }
+  .tile .bottom { display: flex; justify-content: space-between; align-items: center; }
+
+  .back {
+    font: inherit; font-size: 14px; font-weight: 500; color: var(--muted); cursor: pointer;
+    background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+    text-decoration: none; display: inline-block; margin-bottom: 18px;
+  }
+  .back:hover { color: var(--text); border-color: var(--muted); }
+  #view .toolbar { margin: 16px 0 0; }
+  [hidden] { display: none !important; }
+
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
+  footer { color: var(--muted); font-size: 13px; padding: 24px 0 48px; border-top: 1px solid var(--line); margin-top: 48px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">직접 만든 웹앱 모음</p>
+    <h1>onezerozero.com</h1>
+    <p class="lead">직접 만든 웹앱을 한곳에 모았습니다. 상자를 눌러 들어가세요.</p>
+  </header>
+
+  <main>
+    <div id="home" class="home-grid"></div>
+
+    <div id="view" hidden>
+      <a class="back" href="#">← 처음으로</a>
+      <div id="list"></div>
+      <div class="toolbar">
+        <input class="search" id="q" type="search" placeholder="이 안에서 찾기 (예: 회귀, 군집, 지진)" aria-label="웹앱 검색">
+      </div>
+      <div id="sections"></div>
+      <p class="empty" id="empty" hidden>찾는 웹앱이 없습니다.</p>
+    </div>
+  </main>
+
+  <footer>
+    모든 웹앱은 <a href="https://github.com/onezerozerocom" target="_blank" rel="noopener">github.com/onezerozerocom</a>에 있습니다.
+  </footer>
+</div>
+
+<script>
+// 새 웹앱을 올리면 여기에 한 줄 추가하세요.
+const GH = "https://onezerozerocom.github.io/";
+const REPO = "https://github.com/onezerozerocom/";
+
+// 큰 그룹 → 작은 분류(SECTIONS) → 웹앱(APPS)
+const GROUPS = [
+  { key: "ds",      title: "데이터 과학", note: "수업용 학습지·시뮬레이션", icon: "📊", color: "blue" },
+  { key: "teacher", title: "교사용 도구", note: "수업 운영·기록", icon: "📋", color: "violet" },
+];
+
+const SECTIONS = [
+  { group: "ds",      key: "theory",  title: "이론 시뮬레이션", note: "개념을 직접 움직여 보며 익히기", color: "blue" },
+  { group: "ds",      key: "orange",  title: "오렌지3 학습지", note: "실제 데이터로 분석해 보기", color: "orange" },
+  { group: "ds",      key: "python",  title: "파이썬 실습",     note: "코드로 데이터 다루기", color: "green" },
+  { group: "teacher", key: "teacher", title: null,             note: "",                      color: "violet" },
+];
+
+const APPS = [
+  { sec: "theory", repo: "orange3-regression-theory", icon: "📈",
+    title: "회귀분석 이론",
+    desc: "독립·종속 변수, 최소제곱법, 상관계수, 결정계수까지 시뮬레이션으로 살펴보고 빈칸을 채웁니다.",
+    tags: ["회귀", "시뮬레이션"] },
+  { sec: "theory", repo: "orange3-clustering-theory", icon: "🔵",
+    title: "군집분석 이론",
+    desc: "군집 분석의 기본 개념을 시뮬레이션으로 살펴보고 단계별 빈칸을 직접 채웁니다.",
+    tags: ["군집", "k-평균"] },
+  { sec: "orange", repo: "orange3-earthquake", icon: "🌏",
+    title: "국내 지진 데이터 탐구",
+    desc: "최근 약 10년간의 국내 지진 데이터로 배우는 탐색적 데이터 분석 학습지입니다.",
+    tags: ["탐색적 분석", "시각화"] },
+  { sec: "orange", repo: "orange3-advertising-sales", icon: "📺",
+    title: "광고비와 매출의 관계",
+    desc: "TV·라디오·신문 광고비와 매출로 단순·다중 선형 회귀, 기계학습 기반 예측을 해 봅니다.",
+    tags: ["회귀", "다중 회귀", "예측"] },
+  { sec: "orange", repo: "orange3-obesity", icon: "🛌",
+    title: "수면·식습관과 청소년 비만율",
+    desc: "수면 시간과 식생활 자료로 청소년 비만율을 설명하는 회귀 모델을 만들고 비교합니다.",
+    tags: ["회귀", "기계학습"] },
+  { sec: "orange", repo: "orange3-clothing-sunshine", icon: "🧥",
+    title: "날씨로 정하는 오늘의 옷차림",
+    desc: "기온·일조량 등 수원 날씨 데이터를 군집 분석해 날씨별 옷차림을 정해 봅니다.",
+    tags: ["군집", "k-평균", "날씨"] },
+  { sec: "python", repo: "python-iris", icon: "🌸",
+    title: "붓꽃(iris) 데이터 전처리",
+    desc: "붓꽃(iris) 데이터로 데이터 전처리 과정을 파이썬 코드로 직접 실습합니다.",
+    tags: ["파이썬", "전처리"] },
+  { sec: "teacher", repo: "observation-notes", icon: "📝",
+    title: "학생 관찰 기록",
+    desc: "수업 중 학생 관찰을 기록하고 학기말 세특 작성에 활용하는 교사용 웹앱입니다.",
+    tags: ["교사용", "세특"] },
+];
+
+const list = document.getElementById("list");
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+const COLOR_VAR = { blue: "--blue", orange: "--orange", green: "--green", violet: "--violet" };
+const renderSection = s => {
+  const apps = APPS.filter(a => a.sec === s.key);
+  const head = s.title
+    ? `<div class="sec-head"><h3 style="--dot: var(${COLOR_VAR[s.color]})">${s.title}</h3><span>${s.note} · ${apps.length}개</span></div>`
+    : "";
+  return `<section data-sec="${s.key}">
+    ${head}
+    <div class="grid">${apps.map(a => `
+      <a class="card ${s.color}" href="${GH}${a.repo}/" target="_blank" rel="noopener"
+         data-text="${esc((a.title + " " + a.desc + " " + a.tags.join(" ") + " " + a.repo).toLowerCase())}">
+        <div class="icon" aria-hidden="true">${a.icon}</div>
+        <h4>${esc(a.title)}</h4>
+        <p>${esc(a.desc)}</p>
+        <div class="meta">${a.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("")}<span class="go">열기 →</span></div>
+      </a>`).join("")}
+    </div>
+  </section>`;
+};
+
+const home = document.getElementById("home");
+const view = document.getElementById("view");
+const sectionsEl = document.getElementById("sections");
+const q = document.getElementById("q");
+const appsOf = g => APPS.filter(a => SECTIONS.some(s => s.group === g.key && s.key === a.sec));
+
+// 첫 화면: 큰 상자 두 개
+home.innerHTML = GROUPS.map(g => {
+  const subs = SECTIONS.filter(s => s.group === g.key && s.title);
+  return `<a class="tile ${g.color}" href="#${g.key}">
+    <div class="icon" aria-hidden="true">${g.icon}</div>
+    <h2>${g.title}</h2>
+    <p>${g.note}</p>
+    <div class="subs">${subs.map(s => `<span>${s.title} ${APPS.filter(a => a.sec === s.key).length}</span>`).join("")}</div>
+    <div class="bottom"><span class="count">웹앱 ${appsOf(g).length}개</span><span class="go">들어가기 →</span></div>
+  </a>`;
+}).join("");
+
+function addCodeLinks(root) {
+  root.querySelectorAll(".card").forEach(card => {
+    const repo = card.getAttribute("href").replace(GH, "").replace(/\/$/, "");
+    const code = document.createElement("span");
+    code.className = "code"; code.textContent = "코드"; code.setAttribute("role", "link"); code.tabIndex = 0;
+    const open = e => { e.preventDefault(); e.stopPropagation(); window.open(REPO + repo, "_blank", "noopener"); };
+    code.addEventListener("click", open);
+    code.addEventListener("keydown", e => { if (e.key === "Enter") open(e); });
+    card.appendChild(code);
+  });
+}
+
+// 그룹 안 화면
+function route() {
+  const g = GROUPS.find(x => "#" + x.key === location.hash);
+  home.hidden = !!g; view.hidden = !g;
+  document.querySelector(".lead").hidden = !!g;
+  document.title = g ? `${g.title} · onezerozero.com` : "onezerozero.com";
+  if (!g) return;
+  const secs = SECTIONS.filter(s => s.group === g.key);
+  document.getElementById("list").innerHTML =
+    `<div class="group-head"><h2>${g.icon} ${g.title}</h2><span>${g.note} · ${appsOf(g).length}개</span></div>`;
+  sectionsEl.innerHTML = secs.map(renderSection).join("");
+  addCodeLinks(sectionsEl);
+  q.value = ""; apply();
+  window.scrollTo(0, 0);
+}
+
+function apply() {
+  const term = q.value.trim().toLowerCase();
+  let shown = 0;
+  sectionsEl.querySelectorAll("section").forEach(sec => {
+    let n = 0;
+    sec.querySelectorAll(".card").forEach(c => {
+      const ok = !term || c.dataset.text.includes(term);
+      c.hidden = !ok; if (ok) n++;
+    });
+    sec.hidden = n === 0; shown += n;
+  });
+  document.getElementById("empty").hidden = shown > 0;
+}
+q.addEventListener("input", apply);
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
