@@ -48,6 +48,15 @@
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
 
   header { padding: 56px 0 28px; }
+  .brand { display: flex; align-items: center; gap: 18px; margin: 0 0 14px; }
+  .brand-text { min-width: 0; }
+  .brand .eyebrow { margin: 0 0 4px; }
+  .brand h1 { margin: 0; }
+  .avatar {
+    flex: none; width: 84px; height: 84px; border-radius: 50%; object-fit: cover; display: block;
+    border: 2px solid var(--surface); box-shadow: var(--shadow), 0 0 0 1px var(--line);
+  }
+  @media (max-width: 480px) { .avatar { width: 64px; height: 64px; } .brand { gap: 12px; } }
   .eyebrow { font-size: 14px; font-weight: 700; color: var(--orange); letter-spacing: .02em; margin: 0 0 8px; }
   h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 900; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.02em; }
   .lead { color: var(--muted); font-size: 16px; margin: 0; max-width: 40em; }
@@ -152,8 +161,13 @@
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">정보·컴퓨터 교육용 웹앱</p>
-    <h1>onezerozero.com</h1>
+    <div class="brand">
+      <img class="avatar" src="profile.jpg" alt="onezerozero 프로필">
+      <div class="brand-text">
+        <p class="eyebrow">정보·컴퓨터 교육용 웹앱</p>
+        <h1>onezerozero.com</h1>
+      </div>
+    </div>
     <p class="lead">정보·컴퓨터 교육용 웹앱을 한곳에 모았습니다. 상자를 눌러 들어가세요.</p>
   </header>
 
@@ -223,6 +237,10 @@ const APPS = [
     title: "붓꽃(iris) 데이터 전처리",
     desc: "붓꽃(iris) 데이터로 데이터 전처리 과정을 파이썬 코드로 직접 실습합니다.",
     tags: ["파이썬", "전처리"] },
+  { sec: "teacher", repo: "class-participation", icon: "🙋",
+    title: "실시간 수업 참여 도구",
+    desc: "수업 중 도움 요청 대기열, 이해도 체크, 퀴즈, 짧은 답 질문을 학생과 실시간으로 주고받습니다.",
+    tags: ["교사용", "실시간"] },
   { sec: "teacher", repo: "observation-notes", icon: "📝",
     title: "학생 관찰 기록",
     desc: "수업 중 학생 관찰을 기록하고 학기말 세특 작성에 활용하는 교사용 웹앱입니다.",
