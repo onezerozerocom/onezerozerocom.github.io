@@ -205,6 +205,7 @@ const SECTIONS = [
   { group: "ds",      key: "theory",  title: "이론 시뮬레이션", note: "개념을 직접 움직여 보며 익히기", color: "blue" },
   { group: "ds",      key: "orange",  title: "오렌지3 학습지", note: "실제 데이터로 분석해 보기", color: "orange" },
   { group: "ds",      key: "python",  title: "파이썬 실습",     note: "코드로 데이터 다루기", color: "green" },
+  { group: "ds",      key: "project", title: "데이터 과학 프로젝트", note: "주제를 정해 처음부터 끝까지", color: "blue" },
   { group: "teacher", key: "teacher", title: null,             note: "",                      color: "violet" },
 ];
 
@@ -241,6 +242,11 @@ const APPS = [
     title: "펭귄(penguins) 데이터 전처리",
     desc: "펭귄 데이터로 데이터 전처리 과정을 파이썬 코드로 직접 실습합니다.",
     tags: ["파이썬", "전처리"] },
+  // url: GitHub Pages가 아닌 곳(Vercel 등)에 배포한 웹앱 주소
+  { sec: "project", repo: "ds-project-sdgs", url: "https://ds-project-sdgs.vercel.app/", icon: "🌍",
+    title: "SDGs 데이터 과학 프로젝트 노트",
+    desc: "SDGs에서 주제를 골라 문제 정의, 데이터 수집, 탐색적 분석, 회귀 분석, 일반화·공유까지 직접 기록하고 AI 코치의 피드백을 받습니다.",
+    tags: ["프로젝트", "SDGs", "탐색적 분석", "AI 코치"] },
   { sec: "teacher", repo: "class-participation", icon: "🙋",
     title: "실시간 수업 참여 도구",
     desc: "수업 중 도움 요청 대기열, 이해도 체크, 퀴즈, 짧은 답 질문을 학생과 실시간으로 주고받습니다.",
@@ -263,7 +269,7 @@ const renderSection = s => {
   return `<section data-sec="${s.key}">
     ${head}
     <div class="grid">${apps.map(a => `
-      <a class="card ${s.color}" href="${GH}${a.repo}/" target="_blank" rel="noopener"
+      <a class="card ${s.color}" href="${a.url || GH + a.repo + "/"}" data-repo="${a.repo}" target="_blank" rel="noopener"
          data-text="${esc((a.title + " " + a.desc + " " + a.tags.join(" ") + " " + a.repo).toLowerCase())}">
         <div class="icon" aria-hidden="true">${a.icon}</div>
         <h4>${esc(a.title)}</h4>
@@ -294,7 +300,7 @@ home.innerHTML = GROUPS.map(g => {
 
 function addCodeLinks(root) {
   root.querySelectorAll(".card").forEach(card => {
-    const repo = card.getAttribute("href").replace(GH, "").replace(/\/$/, "");
+    const repo = card.dataset.repo;
     const code = document.createElement("span");
     code.className = "code"; code.textContent = "코드"; code.setAttribute("role", "link"); code.tabIndex = 0;
     const open = e => { e.preventDefault(); e.stopPropagation(); window.open(REPO + repo, "_blank", "noopener"); };
