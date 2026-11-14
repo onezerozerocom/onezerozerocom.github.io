@@ -135,6 +135,7 @@
   }
   .tile:hover, .tile:focus-visible { transform: translateY(-3px); border-color: var(--c); outline: none; }
   .tile.violet { --c: var(--violet); --cb: var(--violet-bg); }
+  .tile.green  { --c: var(--green);  --cb: var(--green-bg); }
   .tile .icon { width: 56px; height: 56px; font-size: 28px; border-radius: 14px; margin-bottom: 18px; }
   .tile h2 { font-size: 26px; font-weight: 900; margin: 0 0 6px; letter-spacing: -.01em; }
   .tile p { color: var(--muted); font-size: 15px; margin: 0 0 18px; }
@@ -180,7 +181,7 @@
       <a class="back" href="#">← 처음으로</a>
       <div id="list"></div>
       <div class="toolbar">
-        <input class="search" id="q" type="search" placeholder="이 안에서 찾기 (예: 회귀, 군집, 지진)" aria-label="웹앱 검색">
+        <input class="search" id="q" type="search" placeholder="이 안에서 찾기 (예: 회귀, 군집, 객체)" aria-label="웹앱 검색">
       </div>
       <div id="sections"></div>
       <p class="empty" id="empty" hidden>찾는 웹앱이 없습니다.</p>
@@ -201,6 +202,7 @@ const REPO = "https://github.com/onezerozerocom/";
 // 큰 그룹 → 작은 분류(SECTIONS) → 웹앱(APPS)
 const GROUPS = [
   { key: "ds",      title: "데이터 과학", note: "수업용 학습지·시뮬레이션", icon: "📊", color: "blue" },
+  { key: "prog",    title: "프로그래밍", note: "코드를 한 줄씩 실행하며 원리 익히기", icon: "🐍", color: "green" },
   { key: "teacher", title: "교사용 도구", note: "수업 운영·기록", icon: "📋", color: "violet" },
 ];
 
@@ -209,6 +211,7 @@ const SECTIONS = [
   { group: "ds",      key: "orange",  title: "오렌지3 학습지", note: "실제 데이터로 분석해 보기", color: "orange" },
   { group: "ds",      key: "python",  title: "파이썬 실습",     note: "코드로 데이터 다루기", color: "green" },
   { group: "ds",      key: "project", title: "데이터 과학 프로젝트", note: "주제를 정해 처음부터 끝까지", color: "blue" },
+  { group: "prog",    key: "oop",     title: "객체지향 프로그래밍", note: "클래스·객체·메서드·상속", color: "green" },
   { group: "teacher", key: "teacher", title: null,             note: "",                      color: "violet" },
 ];
 
@@ -253,6 +256,10 @@ const APPS = [
     title: "펭귄(penguins) 데이터 전처리",
     desc: "펭귄 데이터로 데이터 전처리 과정을 파이썬 코드로 직접 실습합니다.",
     tags: ["파이썬", "전처리"] },
+  { sec: "oop", repo: "python-oop-pet", icon: "🐣",
+    title: "펫 키우기로 배우는 객체",
+    desc: "펫 설계도(클래스)를 만들고 펫(객체)을 키우며 속성, 메서드, self, 상속을 익힙니다. 말풍선을 따라 빈칸을 채우면 게임기 화면에서 펫이 바뀝니다.",
+    tags: ["파이썬", "클래스", "객체", "상속"] },
   // url: GitHub Pages가 아닌 곳(Vercel 등)에 배포한 웹앱 주소
   { sec: "project", repo: "ds-project-sdgs", url: "https://ds-project-sdgs.vercel.app/", icon: "🌍",
     title: "SDGs 데이터 과학 프로젝트 노트",
