@@ -11,7 +11,6 @@ const UNITS = [
     group: "ds", key: "regression", icon: "📈", color: "blue",
     title: "회귀 분석",
     summary: "두 변수의 관계를 직선으로 나타내고, 그 직선으로 값을 예측하며 모델을 평가합니다.",
-    draft: true,
 
     // ① 성취기준: 2022 개정 정보과 교육과정(별책10) 데이터 과학 원문 그대로
     standards: [
