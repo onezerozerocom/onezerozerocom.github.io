@@ -154,6 +154,58 @@
   #view .toolbar { margin: 16px 0 0; }
   [hidden] { display: none !important; }
 
+  /* 웹앱 보기 / 단원 보기 */
+  .tabs { display: flex; gap: 6px; margin: 18px 0 0; }
+  .tabs a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; }
+  .tabs a[aria-current="page"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* 단원 목록 카드 */
+  .unit-card .stats { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* 단원 페이지 */
+  .unit { margin-top: 24px; }
+  .unit-title { display: flex; align-items: center; gap: 14px; margin: 0 0 6px; }
+  .unit-title .icon { margin: 0; flex: none; }
+  .unit-title h2 { font-size: clamp(22px, 4vw, 28px); font-weight: 900; margin: 0; letter-spacing: -.01em; }
+  .unit-summary { color: var(--muted); margin: 0 0 8px; }
+  .draft-note { font-size: 14px; color: var(--orange); background: var(--orange-bg); border-radius: 10px; padding: 10px 14px; margin: 16px 0 0; }
+  .block { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 22px; margin: 18px 0; }
+  .block > h3 { font-size: 17px; margin: 0 0 14px; display: flex; align-items: center; gap: 10px; }
+  .block > h3 .num { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+    font-size: 14px; font-weight: 700; color: var(--blue); background: var(--blue-bg); flex: none; }
+  .block ul { margin: 0; padding-left: 1.2em; }
+  .block li + li { margin-top: 4px; }
+  .std { display: flex; gap: 12px; align-items: baseline; }
+  .std + .std { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .std code { font-family: inherit; font-weight: 700; color: var(--blue); white-space: nowrap; }
+  @media (max-width: 520px) { .std { flex-direction: column; gap: 2px; } }
+  .analysis { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .analysis > div { border-radius: 10px; padding: 14px 16px; background: var(--bg); }
+  .analysis h4 { font-size: 15px; margin: 0 0 4px; }
+  .analysis .hint { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+  .analysis ul { font-size: 15px; }
+  .focus { margin: 0; padding-left: 1.2em; }
+  .focus li { font-size: 15px; }
+  .flow { list-style: none; padding: 0; margin: 0; }
+  .flow li { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; padding: 10px 0; }
+  .flow li + li { border-top: 1px solid var(--line); margin: 0; }
+  .flow .step { font-size: 13px; font-weight: 700; color: var(--blue); background: var(--blue-bg); border-radius: 6px; padding: 2px 8px; }
+  .flow .what { flex: 1 1 220px; }
+  .flow .links { display: flex; gap: 6px; }
+  .flow .links a { font-size: 13px; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; text-decoration: none; }
+  .flow .links a:hover { color: var(--text); border-color: var(--muted); }
+  .todo { border: 1.5px dashed var(--line); border-radius: 10px; padding: 14px 16px; color: var(--muted); font-size: 14px; }
+  .todo code { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+  .ws-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .ws { border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .ws h4 { font-size: 16px; margin: 0; }
+  .ws p { font-size: 14px; color: var(--muted); margin: 0; flex: 1; }
+  .ws .btns { display: flex; gap: 6px; margin-top: 6px; }
+  .ws .btns a { font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 8px; padding: 6px 12px;
+    color: var(--blue); background: var(--blue-bg); }
+  .block .grid { margin-top: 4px; }
+
   .empty { color: var(--muted); text-align: center; padding: 40px 0; }
   footer { color: var(--muted); font-size: 13px; padding: 24px 0 48px; border-top: 1px solid var(--line); margin-top: 48px; }
   footer a { color: inherit; }
@@ -180,7 +232,9 @@
     <div id="view" hidden>
       <a class="back" href="#">← 처음으로</a>
       <div id="list"></div>
-      <div class="toolbar">
+      <nav class="tabs" id="tabs" hidden></nav>
+      <div id="units" hidden></div>
+      <div class="toolbar" id="toolbar">
         <input class="search" id="q" type="search" placeholder="이 안에서 찾기 (예: 회귀, 군집, 객체)" aria-label="웹앱 검색">
       </div>
       <div id="sections"></div>
@@ -194,6 +248,7 @@
   </footer>
 </div>
 
+<script src="units.js"></script>
 <script>
 // 새 웹앱을 올리면 여기에 한 줄 추가하세요.
 const GH = "https://onezerozerocom.github.io/";
@@ -219,7 +274,7 @@ const APPS = [
   { sec: "theory", repo: "orange3-regression-theory", icon: "📈",
     title: "회귀분석 이론",
     desc: "독립·종속 변수, 최소제곱법, 상관계수, 결정계수까지 시뮬레이션으로 살펴보고 빈칸을 채웁니다.",
-    tags: ["회귀", "시뮬레이션"] },
+    tags: ["회귀", "시뮬레이션"], units: ["regression"] },
   { sec: "theory", repo: "orange3-classification-theory", icon: "🍊",
     title: "분류 이론 (KNN)",
     desc: "지도·비지도 학습, 거리, k-최근접 이웃, k 정하기, 정확도까지 시뮬레이션으로 살펴보고 빈칸을 채웁니다.",
@@ -239,11 +294,11 @@ const APPS = [
   { sec: "orange", repo: "orange3-advertising-sales", icon: "📺",
     title: "광고비와 매출의 관계",
     desc: "TV·라디오·신문 광고비와 매출로 단순·다중 선형 회귀, 기계학습 기반 예측을 해 봅니다.",
-    tags: ["회귀", "다중 회귀", "예측"] },
+    tags: ["회귀", "다중 회귀", "예측"], units: ["regression"] },
   { sec: "orange", repo: "orange3-obesity", icon: "🛌",
     title: "수면·식습관과 청소년 비만율",
     desc: "수면 시간과 식생활 자료로 청소년 비만율을 설명하는 회귀 모델을 만들고 비교합니다.",
-    tags: ["회귀", "기계학습"] },
+    tags: ["회귀", "기계학습"], units: ["regression"] },
   { sec: "orange", repo: "orange3-clothing-sunshine", icon: "🧥",
     title: "날씨로 정하는 오늘의 옷차림",
     desc: "기온·일조량 등 수원 날씨 데이터를 군집 분석해 날씨별 옷차림을 정해 봅니다.",
@@ -286,17 +341,20 @@ const renderSection = s => {
     : "";
   return `<section data-sec="${s.key}">
     ${head}
-    <div class="grid">${apps.map(a => `
-      <a class="card ${s.color}" href="${a.url || GH + a.repo + "/"}" data-repo="${a.repo}" target="_blank" rel="noopener"
+    <div class="grid">${apps.map(a => renderCard(a, s.color)).join("")}
+    </div>
+  </section>`;
+};
+const appUrl = a => a.url || GH + a.repo + "/";
+const renderCard = (a, color) => `
+      <a class="card ${color}" href="${appUrl(a)}" data-repo="${a.repo}" target="_blank" rel="noopener"
          data-text="${esc((a.title + " " + a.desc + " " + a.tags.join(" ") + " " + a.repo).toLowerCase())}">
         <div class="icon" aria-hidden="true">${a.icon}</div>
         <h4>${esc(a.title)}</h4>
         <p>${esc(a.desc)}</p>
         <div class="meta">${a.tags.map(t => `<span class="tag">${esc(t)}</span>`).join("")}<span class="go">열기 →</span></div>
-      </a>`).join("")}
-    </div>
-  </section>`;
-};
+      </a>`;
+const secColor = a => (SECTIONS.find(s => s.key === a.sec) || {}).color || "blue";
 
 const home = document.getElementById("home");
 const view = document.getElementById("view");
@@ -317,7 +375,7 @@ home.innerHTML = GROUPS.map(g => {
 }).join("");
 
 function addCodeLinks(root) {
-  root.querySelectorAll(".card").forEach(card => {
+  root.querySelectorAll(".card[data-repo]").forEach(card => {
     const repo = card.dataset.repo;
     const code = document.createElement("span");
     code.className = "code"; code.textContent = "코드"; code.setAttribute("role", "link"); code.tabIndex = 0;
@@ -328,19 +386,119 @@ function addCodeLinks(root) {
   });
 }
 
-// 그룹 안 화면
+// ── 단원 ──────────────────────────────
+const unitsEl = document.getElementById("units");
+const tabsEl = document.getElementById("tabs");
+const toolbarEl = document.getElementById("toolbar");
+const unitApps = u => APPS.filter(a => (a.units || []).includes(u.key));
+const todo = (what, field) =>
+  `<div class="todo">아직 비어 있습니다. <code>units.js</code>의 <code>${field}</code>에 ${what} 내용을 적어 주세요.</div>`;
+const items = list => `<ul>${list.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+
+function renderUnitList(g) {
+  const units = UNITS.filter(u => u.group === g.key);
+  return `<div class="grid" style="margin-top:24px">${units.map(u => `
+    <a class="card ${u.color} unit-card" href="#${g.key}/unit/${u.key}">
+      <div class="icon" aria-hidden="true">${u.icon}</div>
+      <h4>${esc(u.title)}</h4>
+      <p>${esc(u.summary)}</p>
+      <div class="meta">
+        <span class="tag">성취기준 ${u.standards.length}</span>
+        <span class="tag">웹앱 ${unitApps(u).length}</span>
+        <span class="tag">학습지 ${u.worksheets.length}</span>
+        <span class="go">보기 →</span>
+      </div>
+    </a>`).join("")}
+  </div>`;
+}
+
+function renderUnit(g, u) {
+  const n = (i, t) => `<h3><span class="num">${i}</span>${t}</h3>`;
+  const col = (title, hint, list, field) => list ? `<div>
+      <h4>${title}</h4><p class="hint">${hint}</p>
+      ${list.length ? items(list) : todo(title, field)}
+    </div>` : "";
+  const apps = unitApps(u);
+  const flowLinks = f => {
+    const a = APPS.find(x => x.repo === f.app);
+    const w = f.worksheet != null ? u.worksheets[f.worksheet] : null;
+    return [a && `<a href="${appUrl(a)}" target="_blank" rel="noopener">${a.icon} 웹앱</a>`,
+            w && w.pdf && `<a href="${w.pdf}" target="_blank" rel="noopener">📄 학습지</a>`].filter(Boolean).join("");
+  };
+  return `<a class="back" href="#${g.key}">← 단원 목록</a>
+  <article class="unit">
+    <div class="unit-title"><div class="icon" aria-hidden="true">${u.icon}</div><h2>${esc(u.title)}</h2></div>
+    <p class="unit-summary">${esc(u.summary)}</p>
+    ${u.draft ? `<p class="draft-note">시안입니다. 지식·이해, 과정·기능, 수업 주안점, 수업 흐름은 학습지에서 읽어 낸 초안이니 확인해 주세요.</p>` : ""}
+
+    <section class="block">${n(1, "성취기준")}
+      ${u.standards.length
+        ? u.standards.map(s => `<div class="std"><code>${esc(s.code)}</code><span>${esc(s.text)}</span></div>`).join("")
+        : todo("성취기준", "standards")}
+    </section>
+
+    <section class="block">${n(2, "성취기준 분석")}
+      <div class="analysis">
+        ${col("지식·이해", "무엇을 알아야 하나", u.knowledge, "knowledge")}
+        ${col("과정·기능", "무엇을 할 수 있어야 하나", u.skills, "skills")}
+        ${col("가치·태도", "어떤 태도를 기르나", u.values, "values")}
+      </div>
+    </section>
+
+    <section class="block">${n(3, "수업 주안점")}
+      ${u.focus.length ? `<ul class="focus">${u.focus.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : todo("수업 주안점", "focus")}
+    </section>
+
+    <section class="block">${n(4, "수업 흐름")}
+      ${u.flow.length ? `<ol class="flow">${u.flow.map(f => `<li>
+          <span class="step">${esc(f.step)}</span><span class="what">${esc(f.title)}</span>
+          <span class="links">${flowLinks(f)}</span></li>`).join("")}</ol>` : todo("수업 흐름", "flow")}
+    </section>
+
+    <section class="block">${n(5, "수업 자료")}
+      <h4 style="margin:0 0 10px">학습지</h4>
+      ${u.worksheets.length ? `<div class="ws-list">${u.worksheets.map(w => `<div class="ws">
+          <h4>📄 ${esc(w.title)}</h4><p>${esc(w.note || "")}</p>
+          <div class="btns">${w.pdf ? `<a href="${w.pdf}" target="_blank" rel="noopener">PDF 보기</a>` : ""}${w.hwpx ? `<a href="${w.hwpx}" download>hwpx 내려받기</a>` : ""}</div>
+        </div>`).join("")}</div>` : todo("학습지", "worksheets")}
+      <h4 style="margin:22px 0 10px">웹앱</h4>
+      <div class="grid">${apps.map(a => renderCard(a, secColor(a))).join("")}</div>
+    </section>
+  </article>`;
+}
+
+// 그룹 안 화면  (#ds 단원 목록 · #ds/apps 웹앱 목록 · #ds/unit/regression 단원 페이지)
 function route() {
-  const g = GROUPS.find(x => "#" + x.key === location.hash);
+  const [gk, mode, uk] = location.hash.slice(1).split("/");
+  const g = GROUPS.find(x => x.key === gk);
   home.hidden = !!g; view.hidden = !g;
   document.querySelector(".lead").hidden = !!g;
-  document.title = g ? `${g.title} · onezerozero.com` : "onezerozero.com";
-  if (!g) return;
+  if (!g) { document.title = "onezerozero.com"; return; }
+  const hasUnits = UNITS.some(x => x.group === g.key);
+  const u = mode === "unit" && UNITS.find(x => x.group === g.key && x.key === uk);
+  // 단원이 있는 그룹은 단원 보기가 첫 화면 (#ds), 웹앱 보기는 #ds/apps
+  const unitMode = hasUnits && mode !== "apps";
+  document.title = `${u ? u.title + " · " : ""}${g.title} · onezerozero.com`;
+
   const secs = SECTIONS.filter(s => s.group === g.key);
   document.getElementById("list").innerHTML =
     `<div class="group-head"><h2>${g.icon} ${g.title}</h2><span>${g.note} · ${appsOf(g).length}개</span></div>`;
-  sectionsEl.innerHTML = secs.map(renderSection).join("");
-  addCodeLinks(sectionsEl);
-  q.value = ""; apply();
+
+  tabsEl.hidden = !hasUnits || !!u;
+  tabsEl.innerHTML = `<a href="#${g.key}"${unitMode ? ' aria-current="page"' : ""}>단원 보기</a>
+    <a href="#${g.key}/apps"${unitMode ? "" : ' aria-current="page"'}>웹앱 보기</a>`;
+
+  toolbarEl.hidden = sectionsEl.hidden = unitMode;
+  unitsEl.hidden = !unitMode;
+  if (unitMode) {
+    document.getElementById("empty").hidden = true;
+    unitsEl.innerHTML = u ? renderUnit(g, u) : renderUnitList(g);
+    addCodeLinks(unitsEl);
+  } else {
+    sectionsEl.innerHTML = secs.map(renderSection).join("");
+    addCodeLinks(sectionsEl);
+    q.value = ""; apply();
+  }
   window.scrollTo(0, 0);
 }
 
